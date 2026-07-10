@@ -2,11 +2,19 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   APP_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  APP_URL: z.string().url(),
+  APP_URL: z.preprocess(
+    (value) =>
+      typeof value === 'string' && !/^https?:\/\//i.test(value) ? `https://${value}` : value,
+    z.string().url(),
+  ),
   NEXT_PUBLIC_APP_NAME: z.string().min(1).max(120),
   DATABASE_URL: z.string().url(),
   REDIS_URL: z.string().url(),
-  MEILI_HOST: z.string().url(),
+  MEILI_HOST: z.preprocess(
+    (value) =>
+      typeof value === 'string' && !/^https?:\/\//i.test(value) ? `http://${value}` : value,
+    z.string().url(),
+  ),
   MEILI_MASTER_KEY: z.string().min(16),
   SESSION_SECRET: z.string().min(32),
   URL_HASH_SECRET: z.string().min(32),

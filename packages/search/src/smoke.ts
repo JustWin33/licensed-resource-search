@@ -14,6 +14,7 @@ const doc: PublicSearchDocument = {
   title: 'Claude Code 工程骨架',
   summary: 'Meilisearch stage two smoke fixture',
   categories: ['AI'],
+  categorySlugs: ['ai'],
   tags: ['Claude Code'],
   titlePinyinFull: 'claudecodegongchenggujia',
   titlePinyinInitials: 'cldgcgj',

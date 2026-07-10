@@ -1,14 +1,19 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
+import { checkCloudLink, type LinkStatus } from '@platform/cloud-drives';
 import { publicationGate } from '@platform/core';
 import { getPrisma } from '@platform/db';
 import {
+  buildSynonymMap,
   buildPublicSearchDocument,
   createSearchClient,
   PUBLIC_RESOURCE_INDEX,
   publicIndexSettings,
 } from '@platform/search';
 import { getServerEnv } from '@platform/config/server';
+import { v7 as uuidv7 } from 'uuid';
+import { nextCheckAt, resolveObservedLinkStatus } from './link-check-policy.js';
+import { aggregateAnalytics, enqueueDailyMaintenance, runRetentionCleanup } from './maintenance.js';
 
 const env = getServerEnv();
 const connection = new IORedis(env.REDIS_URL, {
@@ -39,6 +44,11 @@ async function ensureIndex() {
   const index = search.index(PUBLIC_RESOURCE_INDEX);
   const task = await index.updateSettings(publicIndexSettings);
   await search.tasks.waitForTask(task.taskUid);
+  const synonyms = await prisma.synonym.findMany({ where: { isEnabled: true } });
+  const synonymTask = await index.updateSynonyms(
+    buildSynonymMap(synonyms.map((row) => row.termsJson)),
+  );
+  await search.tasks.waitForTask(synonymTask.taskUid);
   indexReady = true;
 }
 
@@ -95,6 +105,9 @@ async function syncResource(resourceId: string) {
     title: resource.title,
     summary: resource.summary,
     categories: resource.categories.map(({ category }) => category.name),
+    categorySlugs: resource.categories
+      .filter(({ category }) => category.isEnabled)
+      .map(({ category }) => category.slug),
     tags: resource.tags.map(({ tag }) => tag.name),
     providerSlugs: enabledLinks.map(({ provider }) => provider.slug),
     rightsStatus: resource.rightsStatus,
@@ -105,6 +118,124 @@ async function syncResource(resourceId: string) {
   });
   const task = await index.addDocuments([document], { primaryKey: 'id' });
   await search.tasks.waitForTask(task.taskUid);
+}
+
+function configuredHosts(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string')
+    : [];
+}
+
+const httpResultClass = {
+  none: 'none',
+  '2xx': 'two_xx',
+  '3xx': 'three_xx',
+  '4xx': 'four_xx',
+  '5xx': 'five_xx',
+  network_error: 'network_error',
+  blocked: 'blocked',
+} as const;
+
+async function checkLink(cloudLinkId: string) {
+  const link = await prisma.cloudLink.findUnique({
+    where: { id: cloudLinkId },
+    include: {
+      provider: true,
+      checkRecords: { orderBy: { checkedAt: 'desc' }, take: 1 },
+    },
+  });
+  if (!link || link.deletedAt || !link.isEnabled || !link.provider.isEnabled) return;
+  const result = await checkCloudLink(
+    {
+      normalizedUrl: new URL(link.normalizedUrl),
+      provider: link.provider.slug,
+      adapterVersion: link.provider.adapterVersion,
+      hasPasscode: Boolean(link.passcodeCiphertext),
+    },
+    configuredHosts(link.provider.allowedHostPatterns),
+  );
+  const previousStatus = link.checkRecords[0]?.status as LinkStatus | undefined;
+  const state = resolveObservedLinkStatus({
+    currentStatus: link.currentStatus,
+    observedStatus: result.status,
+    previousObservedStatus: previousStatus,
+    statusConfirmations: link.statusConfirmations,
+  });
+  const next = nextCheckAt(result.status);
+  await prisma.$transaction(async (tx) => {
+    await tx.linkCheckRecord.create({
+      data: {
+        id: uuidv7(),
+        cloudLinkId: link.id,
+        adapterVersion: result.adapterVersion,
+        status: result.status,
+        httpResultClass: httpResultClass[result.httpResultClass],
+        errorCategory: result.errorCategory,
+        durationMs: result.durationMs,
+        checkedAt: new Date(result.checkedAt),
+        nextCheckAt: next,
+      },
+    });
+    await tx.cloudLink.update({
+      where: { id: link.id },
+      data: {
+        currentStatus: state.currentStatus,
+        statusConfirmations: state.statusConfirmations,
+        lastCheckedAt: new Date(result.checkedAt),
+        nextCheckAt: next,
+      },
+    });
+    if (state.currentStatus !== link.currentStatus) {
+      await tx.outboxEvent.create({
+        data: {
+          id: uuidv7(),
+          aggregateType: 'resource',
+          aggregateId: link.resourceId,
+          eventType: 'resource_index_requested',
+          payloadVersion: 1,
+          payloadJson: { resourceId: link.resourceId, reason: 'link_status_changed' },
+        },
+      });
+    }
+  });
+}
+
+async function enqueueDueLinkChecks() {
+  const links = await prisma.cloudLink.findMany({
+    where: {
+      isEnabled: true,
+      deletedAt: null,
+      provider: { isEnabled: true },
+      OR: [{ nextCheckAt: { lte: new Date() } }, { lastCheckedAt: null }],
+    },
+    orderBy: [{ nextCheckAt: 'asc' }, { createdAt: 'asc' }],
+    take: 20,
+    select: { id: true },
+  });
+  for (const link of links) {
+    const pending = await prisma.outboxEvent.findFirst({
+      where: {
+        aggregateType: 'cloud_link',
+        aggregateId: link.id,
+        eventType: 'link_check_requested',
+        processedAt: null,
+        deadLetteredAt: null,
+      },
+      select: { id: true },
+    });
+    if (!pending) {
+      await prisma.outboxEvent.create({
+        data: {
+          id: uuidv7(),
+          aggregateType: 'cloud_link',
+          aggregateId: link.id,
+          eventType: 'link_check_requested',
+          payloadVersion: 1,
+          payloadJson: { cloudLinkId: link.id, reason: 'scheduled' },
+        },
+      });
+    }
+  }
 }
 
 async function processOutbox() {
@@ -124,6 +255,16 @@ async function processOutbox() {
           await ensureIndex();
           const task = await search.index(PUBLIC_RESOURCE_INDEX).deleteDocument(event.aggregateId);
           await search.tasks.waitForTask(task.taskUid);
+        } else if (event.eventType === 'link_check_requested') {
+          await checkLink(event.aggregateId);
+        } else if (event.eventType === 'analytics_aggregate_requested') {
+          const payload = event.payloadJson;
+          const day =
+            payload && typeof payload === 'object' && !Array.isArray(payload) ? payload.day : null;
+          if (typeof day !== 'string') throw new Error('Analytics day missing');
+          await aggregateAnalytics(new Date(day));
+        } else if (event.eventType === 'retention_cleanup_requested') {
+          await runRetentionCleanup();
         } else {
           throw new Error(`Unsupported outbox event: ${event.eventType}`);
         }
@@ -157,8 +298,14 @@ queueWorker.on('failed', (job, error) =>
 );
 
 const pollTimer = setInterval(() => void processOutbox(), 1_000);
+const linkScheduleTimer = setInterval(() => void enqueueDueLinkChecks(), 60_000);
+const maintenanceTimer = setInterval(() => void enqueueDailyMaintenance(), 60 * 60_000);
 void ensureIndex()
-  .then(() => processOutbox())
+  .then(async () => {
+    await enqueueDueLinkChecks();
+    await enqueueDailyMaintenance();
+    await processOutbox();
+  })
   .catch((error) =>
     console.error(
       JSON.stringify({
@@ -170,6 +317,8 @@ void ensureIndex()
 
 async function shutdown(signal: string) {
   clearInterval(pollTimer);
+  clearInterval(linkScheduleTimer);
+  clearInterval(maintenanceTimer);
   console.info(JSON.stringify({ event: 'worker.shutdown', signal }));
   await queueWorker.close();
   await connection.quit();

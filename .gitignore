@@ -13,6 +13,7 @@ test-results/
 *.log
 work/
 evidence-storage/
+backups/
 private-data/
 uploads/
 .DS_Store

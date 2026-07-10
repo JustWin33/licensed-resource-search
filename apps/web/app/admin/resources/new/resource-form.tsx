@@ -4,7 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { csrfToken } from '@web/src/client/csrf';
 
-export function ResourceForm() {
+type Option = { id: string; name: string };
+
+export function ResourceForm({ categories, tags }: { categories: Option[]; tags: Option[] }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -21,6 +23,8 @@ export function ResourceForm() {
         summary: form.get('summary'),
         ownerType: form.get('ownerType'),
         rightsStatus: form.get('rightsStatus'),
+        categoryIds: form.getAll('categoryIds'),
+        tagIds: form.getAll('tagIds'),
         source: {
           url: form.get('sourceUrl'),
           name: form.get('sourceName'),
@@ -75,6 +79,27 @@ export function ResourceForm() {
           </select>
         </label>
       </div>
+      <fieldset>
+        <legend>分类</legend>
+        <div className="chips">
+          {categories.map((category) => (
+            <label className="chip" key={category.id}>
+              <input name="categoryIds" type="checkbox" value={category.id} /> {category.name}
+            </label>
+          ))}
+          {categories.length === 0 ? <span className="muted">请先在后台创建分类</span> : null}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>标签</legend>
+        <div className="chips">
+          {tags.map((tag) => (
+            <label className="chip" key={tag.id}>
+              <input name="tagIds" type="checkbox" value={tag.id} /> {tag.name}
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <h2>来源</h2>
       <label>
         来源名称

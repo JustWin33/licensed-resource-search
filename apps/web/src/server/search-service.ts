@@ -1,23 +1,52 @@
 import 'server-only';
 import { createSearchClient, PUBLIC_RESOURCE_INDEX } from '@platform/search';
 import { getPrisma } from '@platform/db';
+import { v7 as uuidv7 } from 'uuid';
 import { getServerEnv } from '../server-env';
 import { HttpError } from './http';
+import { analyticsEnabled } from './privacy';
 
 export type SearchInput = {
   q: string;
   provider?: 'quark' | 'baidu' | 'generic';
+  category?: string;
   rights?: 'owned' | 'authorized' | 'open_licensed' | 'public_domain';
+  linkStatus?: 'pending' | 'available' | 'need_password' | 'risk_controlled' | 'unknown';
   sort: 'relevance' | 'newest' | 'popular';
   limit: number;
 };
+
+async function recordSearch(input: SearchInput, resultCount: number) {
+  if (!(await analyticsEnabled())) return;
+  try {
+    await getPrisma().searchQuery.create({
+      data: {
+        id: uuidv7(),
+        normalizedQuery: input.q.normalize('NFKC').trim().toLowerCase(),
+        filtersJson: {
+          provider: input.provider ?? null,
+          category: input.category ?? null,
+          rights: input.rights ?? null,
+          linkStatus: input.linkStatus ?? null,
+          sort: input.sort,
+        },
+        resultCount,
+        expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60_000),
+      },
+    });
+  } catch {
+    // Search availability must not depend on optional analytics writes.
+  }
+}
 
 export async function searchPublicResources(input: SearchInput) {
   const env = getServerEnv();
   const client = createSearchClient(env.MEILI_HOST, env.MEILI_MASTER_KEY);
   const filters: string[] = [];
   if (input.provider) filters.push(`providerSlugs = "${input.provider}"`);
+  if (input.category) filters.push(`categorySlugs = "${input.category}"`);
   if (input.rights) filters.push(`rightsStatus = "${input.rights}"`);
+  if (input.linkStatus) filters.push(`linkStatuses = "${input.linkStatus}"`);
   let result;
   try {
     result = await client.index(PUBLIC_RESOURCE_INDEX).search(input.q, {
@@ -30,7 +59,10 @@ export async function searchPublicResources(input: SearchInput) {
     throw new HttpError(503, 'SEARCH_UNAVAILABLE', 'Search service is temporarily unavailable');
   }
   let ids = result.hits.map((hit) => String(hit.id));
-  if (ids.length === 0) return { hits: [], estimatedTotalHits: result.estimatedTotalHits ?? 0 };
+  if (ids.length === 0) {
+    await recordSearch(input, 0);
+    return { hits: [], estimatedTotalHits: result.estimatedTotalHits ?? 0 };
+  }
   if (input.sort === 'popular') {
     const clickCounts = await getPrisma().clickEvent.groupBy({
       by: ['resourceId'],
@@ -50,6 +82,13 @@ export async function searchPublicResources(input: SearchInput) {
       complaintStatus: { in: ['none', 'restored'] },
       rightsStatus: { in: ['owned', 'authorized', 'open_licensed', 'public_domain'] },
       sources: { some: { isPublic: true } },
+      ...(input.category
+        ? {
+            categories: {
+              some: { category: { slug: input.category, isEnabled: true } },
+            },
+          }
+        : {}),
       authorizations: {
         some: {
           status: 'active',
@@ -72,6 +111,8 @@ export async function searchPublicResources(input: SearchInput) {
           isEnabled: true,
           deletedAt: null,
           currentStatus: { notIn: ['expired', 'disabled'] },
+          ...(input.provider ? { provider: { slug: input.provider } } : {}),
+          ...(input.linkStatus ? { currentStatus: input.linkStatus } : {}),
         },
       },
     },
@@ -112,5 +153,6 @@ export async function searchPublicResources(input: SearchInput) {
       },
     ];
   });
+  await recordSearch(input, ordered.length);
   return { hits: ordered, estimatedTotalHits: result.estimatedTotalHits ?? ordered.length };
 }

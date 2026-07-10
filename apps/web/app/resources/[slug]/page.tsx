@@ -58,7 +58,13 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
             ))}
           </div>
         </section>
-        <p className="muted">外链状态仅代表最近一次人工或合规检查结果；平台不自动转存内容。</p>
+        <p className="muted">
+          外链状态仅代表最近一次人工或合规检查结果；平台不自动转存内容。前往按钮可能使用后台配置的官方推广渠道，点击不会改变资源价格。
+        </p>
+        <div className="actions">
+          <Link href={`/report?resourceId=${dto.id}`}>举报此资源</Link>
+          <Link href={`/takedown?resourceId=${dto.id}`}>提交侵权通知</Link>
+        </div>
       </article>
     </main>
   );

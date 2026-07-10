@@ -95,6 +95,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@platform/cloud-drives':
+        specifier: workspace:*
+        version: link:../../packages/cloud-drives
       '@platform/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -116,6 +119,9 @@ importers:
       tsx:
         specifier: 4.19.4
         version: 4.19.4
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
     devDependencies:
       '@platform/tsconfig':
         specifier: workspace:*

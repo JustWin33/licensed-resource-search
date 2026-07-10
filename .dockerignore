@@ -1,0 +1,17 @@
+.git
+.github
+.next
+**/.next
+**/dist
+node_modules
+.pnpm-store
+backups
+coverage
+evidence-storage
+private-data
+test-results
+work
+.env
+.env.*
+*.log
+*.tsbuildinfo

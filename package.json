@@ -23,6 +23,9 @@
     "admin:create": "node --env-file-if-exists=.env scripts/run-with-env.mjs pnpm --filter @platform/core admin:create",
     "search:smoke": "node --env-file-if-exists=.env scripts/run-with-env.mjs pnpm --filter @platform/search smoke",
     "search:benchmark": "node --env-file-if-exists=.env scripts/run-with-env.mjs pnpm --filter @platform/search benchmark",
+    "search:rebuild": "node --env-file-if-exists=.env scripts/run-with-env.mjs pnpm --filter @platform/worker search:rebuild",
+    "backup": "node --env-file-if-exists=.env scripts/run-with-env.mjs node scripts/backup.mjs",
+    "restore": "node --env-file-if-exists=.env scripts/run-with-env.mjs node scripts/restore.mjs",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "ci:secrets": "node scripts/check-secrets.mjs"
   },

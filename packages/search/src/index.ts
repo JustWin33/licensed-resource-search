@@ -9,6 +9,7 @@ export type PublicSearchDocument = {
   title: string;
   summary: string;
   categories: string[];
+  categorySlugs: string[];
   tags: string[];
   titlePinyinFull: string;
   titlePinyinInitials: string;
@@ -26,6 +27,7 @@ export type SearchDocumentInput = {
   title: string;
   summary: string;
   categories: string[];
+  categorySlugs: string[];
   tags: string[];
   providerSlugs: string[];
   rightsStatus: string;
@@ -43,6 +45,7 @@ export function buildPublicSearchDocument(input: SearchDocumentInput): PublicSea
     title: input.title,
     summary: input.summary,
     categories: input.categories,
+    categorySlugs: input.categorySlugs,
     tags: input.tags,
     titlePinyinFull: titlePinyin.join(''),
     titlePinyinInitials: titlePinyin.map((part) => part[0] ?? '').join(''),
@@ -68,6 +71,30 @@ export const publicIndexSettings = {
     'titlePinyinFull',
     'titlePinyinInitials',
   ],
-  filterableAttributes: ['providerSlugs', 'rightsStatus', 'linkStatuses', 'publishedAt'],
+  filterableAttributes: [
+    'providerSlugs',
+    'categorySlugs',
+    'rightsStatus',
+    'linkStatuses',
+    'publishedAt',
+  ],
   sortableAttributes: ['publishedAt', 'updatedAt', 'completenessScore'],
 };
+
+export function buildSynonymMap(termGroups: unknown[]): Record<string, string[]> {
+  const map: Record<string, string[]> = {};
+  for (const group of termGroups) {
+    if (!Array.isArray(group)) continue;
+    const terms = [
+      ...new Set(
+        group
+          .filter((term): term is string => typeof term === 'string')
+          .map((term) => term.normalize('NFKC').trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ];
+    if (terms.length < 2) continue;
+    for (const term of terms) map[term] = terms.filter((candidate) => candidate !== term);
+  }
+  return map;
+}

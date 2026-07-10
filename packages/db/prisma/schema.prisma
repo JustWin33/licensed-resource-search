@@ -770,6 +770,7 @@ model ImportRow {
   batchId             String          @map("batch_id") @db.Uuid
   rowNumber           Int             @map("row_number")
   sourceHash          String          @map("source_hash") @db.VarChar(128)
+  payloadJson         Json?           @map("payload_json")
   status              ImportRowStatus @default(pending)
   errorCode           String?         @map("error_code") @db.VarChar(80)
   errorDetailRedacted String?         @map("error_detail_redacted") @db.Text
