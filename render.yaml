@@ -1,36 +1,33 @@
 services:
   - type: web
-    name: licensed-resource-search
+    name: licensed-resource-search-free
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     dockerfilePath: ./Dockerfile
     dockerContext: .
+    dockerCommand: node scripts/start-free.mjs
     healthCheckPath: /health/live
-    preDeployCommand: pnpm db:migrate && pnpm db:seed
     envVars:
-      - fromGroup: licensed-resource-search-secrets
+      - fromGroup: licensed-resource-search-free-secrets
       - key: APP_ENV
         value: production
       - key: APP_URL
         fromService:
           type: web
-          name: licensed-resource-search
+          name: licensed-resource-search-free
           envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: DATABASE_URL
         fromDatabase:
-          name: licensed-resource-search-db
+          name: licensed-resource-search-free-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: keyvalue
-          name: licensed-resource-search-redis
+          name: licensed-resource-search-free-redis
           property: connectionString
       - key: MEILI_HOST
-        fromService:
-          type: pserv
-          name: licensed-resource-search-meili
-          property: hostport
+        value: http://127.0.0.1:7700
       - key: NEXT_PUBLIC_APP_NAME
         value: 授权资料搜索
       - key: EVIDENCE_STORAGE_DRIVER
@@ -43,81 +40,23 @@ services:
         value: '1'
       - key: LOG_LEVEL
         value: info
-    disk:
-      name: evidence-storage
-      mountPath: /app/evidence-storage
-      sizeGB: 1
-
-  - type: worker
-    name: licensed-resource-search-worker
-    runtime: docker
-    plan: starter
-    region: singapore
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    dockerCommand: node --import tsx apps/worker/src/main.ts
-    envVars:
-      - fromGroup: licensed-resource-search-secrets
-      - key: APP_ENV
-        value: production
-      - key: APP_URL
-        value: https://licensed-resource-search.onrender.com
-      - key: DATABASE_URL
-        fromDatabase:
-          name: licensed-resource-search-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: licensed-resource-search-redis
-          property: connectionString
-      - key: MEILI_HOST
-        fromService:
-          type: pserv
-          name: licensed-resource-search-meili
-          property: hostport
-      - key: NEXT_PUBLIC_APP_NAME
-        value: 授权资料搜索
-      - key: EVIDENCE_STORAGE_DRIVER
-        value: local_private
-      - key: LOCAL_EVIDENCE_ROOT
-        value: evidence-storage
-      - key: REGION_STATS_ENABLED
-        value: 'false'
-      - key: TRUSTED_PROXY_HOPS
-        value: '1'
-      - key: LOG_LEVEL
-        value: info
-
-  - type: pserv
-    name: licensed-resource-search-meili
-    runtime: image
-    plan: starter
-    region: singapore
-    image:
-      url: docker.io/getmeili/meilisearch:v1.37.0
-    envVars:
-      - fromGroup: licensed-resource-search-secrets
-      - key: MEILI_ENV
-        value: production
-      - key: MEILI_NO_ANALYTICS
-        value: 'true'
-    disk:
-      name: meilisearch-data
-      mountPath: /meili_data
-      sizeGB: 1
+      - key: BOOTSTRAP_ADMIN_USERNAME
+        value: admin
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        value: ''
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
 
   - type: keyvalue
-    name: licensed-resource-search-redis
-    plan: starter
+    name: licensed-resource-search-free-redis
+    plan: free
     region: singapore
     ipAllowList: []
     maxmemoryPolicy: noeviction
-    persistenceMode: journal-snapshot
 
 databases:
-  - name: licensed-resource-search-db
-    plan: basic-256mb
+  - name: licensed-resource-search-free-db
+    plan: free
     region: singapore
     postgresMajorVersion: '18'
     databaseName: licensed_resource_search
@@ -125,7 +64,7 @@ databases:
     ipAllowList: []
 
 envVarGroups:
-  - name: licensed-resource-search-secrets
+  - name: licensed-resource-search-free-secrets
     envVars:
       - key: MEILI_MASTER_KEY
         generateValue: true

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "admin:create": "tsx src/admin-create.ts",
+    "admin:bootstrap": "tsx src/admin-bootstrap.ts",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"

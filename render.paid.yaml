@@ -1,0 +1,137 @@
+services:
+  - type: web
+    name: licensed-resource-search
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    preDeployCommand: pnpm db:migrate && pnpm db:seed
+    envVars:
+      - fromGroup: licensed-resource-search-secrets
+      - key: APP_ENV
+        value: production
+      - key: APP_URL
+        fromService:
+          type: web
+          name: licensed-resource-search
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      - key: DATABASE_URL
+        fromDatabase:
+          name: licensed-resource-search-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: licensed-resource-search-redis
+          property: connectionString
+      - key: MEILI_HOST
+        fromService:
+          type: pserv
+          name: licensed-resource-search-meili
+          property: hostport
+      - key: NEXT_PUBLIC_APP_NAME
+        value: 授权资料搜索
+      - key: EVIDENCE_STORAGE_DRIVER
+        value: local_private
+      - key: LOCAL_EVIDENCE_ROOT
+        value: evidence-storage
+      - key: REGION_STATS_ENABLED
+        value: 'false'
+      - key: TRUSTED_PROXY_HOPS
+        value: '1'
+      - key: LOG_LEVEL
+        value: info
+    disk:
+      name: evidence-storage
+      mountPath: /app/evidence-storage
+      sizeGB: 1
+
+  - type: worker
+    name: licensed-resource-search-worker
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: node --import tsx apps/worker/src/main.ts
+    envVars:
+      - fromGroup: licensed-resource-search-secrets
+      - key: APP_ENV
+        value: production
+      - key: APP_URL
+        value: https://licensed-resource-search.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: licensed-resource-search-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: licensed-resource-search-redis
+          property: connectionString
+      - key: MEILI_HOST
+        fromService:
+          type: pserv
+          name: licensed-resource-search-meili
+          property: hostport
+      - key: NEXT_PUBLIC_APP_NAME
+        value: 授权资料搜索
+      - key: EVIDENCE_STORAGE_DRIVER
+        value: local_private
+      - key: LOCAL_EVIDENCE_ROOT
+        value: evidence-storage
+      - key: REGION_STATS_ENABLED
+        value: 'false'
+      - key: TRUSTED_PROXY_HOPS
+        value: '1'
+      - key: LOG_LEVEL
+        value: info
+
+  - type: pserv
+    name: licensed-resource-search-meili
+    runtime: image
+    plan: starter
+    region: singapore
+    image:
+      url: docker.io/getmeili/meilisearch:v1.37.0
+    envVars:
+      - fromGroup: licensed-resource-search-secrets
+      - key: MEILI_ENV
+        value: production
+      - key: MEILI_NO_ANALYTICS
+        value: 'true'
+    disk:
+      name: meilisearch-data
+      mountPath: /meili_data
+      sizeGB: 1
+
+  - type: keyvalue
+    name: licensed-resource-search-redis
+    plan: starter
+    region: singapore
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
+    persistenceMode: journal-snapshot
+
+databases:
+  - name: licensed-resource-search-db
+    plan: basic-256mb
+    region: singapore
+    postgresMajorVersion: '18'
+    databaseName: licensed_resource_search
+    user: licensed_resource_search
+    ipAllowList: []
+
+envVarGroups:
+  - name: licensed-resource-search-secrets
+    envVars:
+      - key: MEILI_MASTER_KEY
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: URL_HASH_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
