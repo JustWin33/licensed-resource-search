@@ -10,7 +10,7 @@
 
 提供无真实值 `.env.example`。启动时校验 schema：数据库 URL、Redis URL、Meilisearch URL/key、会话密钥、应用环境、证据存储配置、限流和保留期；生产密钥来自秘密管理器，不进镜像/日志。
 
-阶段二命令目标：`pnpm install --frozen-lockfile`、`docker compose up -d`、`pnpm db:migrate`、一次性 `pnpm admin:create`、`pnpm dev`。这些命令在阶段二实现后才可宣称可运行。
+本地已验证命令：`pnpm install --frozen-lockfile`、`docker compose up -d --wait`、`pnpm db:migrate`、`pnpm db:seed`、一次性 `pnpm admin:create`、`pnpm dev`。根目录运行命令时由 `scripts/run-with-env.mjs` 把 `.env` 传给 workspace 子进程。开发证据写入 `private-data/<LOCAL_EVIDENCE_ROOT>`，该目录不由 Web 服务器公开并被 Git 忽略。
 
 ## 3. 健康检查与可观测性
 

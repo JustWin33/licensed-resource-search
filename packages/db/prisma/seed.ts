@@ -75,19 +75,21 @@ async function main() {
   }
 
   for (const [slug, displayName, adapterVersion] of [
-    ['quark', '夸克网盘', '0.2.0'],
-    ['baidu', '百度网盘', '0.2.0'],
-    ['generic', '通用外链', '0.2.0'],
+    ['quark', '夸克网盘', '0.3.0'],
+    ['baidu', '百度网盘', '0.3.0'],
+    ['generic', '通用外链', '0.3.0'],
   ] as const) {
+    const allowedHostPatterns =
+      slug === 'quark' ? ['pan.quark.cn'] : slug === 'baidu' ? ['pan.baidu.com'] : [];
     await prisma.cloudProvider.upsert({
       where: { slug },
-      update: { displayName, adapterVersion, isEnabled: true },
+      update: { displayName, adapterVersion, allowedHostPatterns, isEnabled: true },
       create: {
         id: uuidv7(),
         slug,
         displayName,
         adapterVersion,
-        allowedHostPatterns: [],
+        allowedHostPatterns,
       },
     });
   }

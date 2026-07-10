@@ -1,6 +1,6 @@
 {
   "name": "@platform/worker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@platform/config": "workspace:*",
+    "@platform/core": "workspace:*",
     "@platform/db": "workspace:*",
+    "@platform/search": "workspace:*",
     "bullmq": "5.58.5",
     "ioredis": "5.6.1",
     "tsx": "4.19.4"

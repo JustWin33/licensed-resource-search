@@ -1,24 +1,30 @@
 {
   "name": "@platform/web",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app next.config.ts",
+    "lint": "eslint app src next.config.ts",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"
   },
   "dependencies": {
+    "@platform/cloud-drives": "workspace:*",
     "@platform/config": "workspace:*",
+    "@platform/core": "workspace:*",
     "@platform/db": "workspace:*",
     "@platform/search": "workspace:*",
+    "@prisma/client": "7.8.0",
+    "argon2": "0.44.0",
     "ioredis": "5.6.1",
     "next": "16.2.10",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "uuid": "11.1.0",
+    "zod": "4.0.0"
   },
   "devDependencies": {
     "@platform/tsconfig": "workspace:*",

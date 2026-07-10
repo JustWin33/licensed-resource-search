@@ -13,10 +13,10 @@ test-results/
 *.log
 work/
 evidence-storage/
+private-data/
 uploads/
 .DS_Store
 .idea/
 .vscode/
 *.tsbuildinfo
 prisma/*.db
-

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Licensed Resource Search — Stage 2',
-  description: 'Infrastructure-only stage two skeleton',
+  title: '授权资料搜索',
+  description: '合规优先、可审计的授权资料搜索与安全跳转平台',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

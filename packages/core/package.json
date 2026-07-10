@@ -1,8 +1,11 @@
 {
   "name": "@platform/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "admin:create": "tsx src/admin-create.ts",
     "lint": "eslint src",
@@ -13,6 +16,7 @@
     "@platform/config": "workspace:*",
     "@platform/db": "workspace:*",
     "argon2": "0.44.0",
+    "zod": "4.0.0",
     "uuid": "11.1.0"
   },
   "devDependencies": {

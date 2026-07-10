@@ -27,14 +27,14 @@
 - [x] T2.6 lint/typecheck/unit/integration 基线与 GitHub Actions
 - [x] T2.7 搜索技术验证：在正式搜索模块实现前，用 105 条业务语料对比 Meilisearch/Typesense；输出 `docs/SEARCH_BENCHMARK.md`、`test/fixtures/search-corpus.json`、`test/fixtures/search-queries.json`
 
-## 3. 阶段三：MVP 实现（待确认）
+## 3. 阶段三：MVP 实现（进行中）
 
-- [ ] T3.1 管理员身份、会话、RBAC、CSRF、审计
-- [ ] T3.2 分类、标签、资源、来源、授权记录/证据和审核状态机
-- [ ] T3.3 夸克/百度/通用外链适配器、URL 安全和链接模型
-- [ ] T3.4 outbox、幂等 Worker、Meilisearch 索引与 `swap-indexes` 重建
-- [ ] T3.5 搜索首页、结果、详情、筛选、排序、空/错误/风控状态
-- [ ] T3.6 安全跳转、渠道模板、点击事件与去刷
+- [x] T3.1 管理员身份、会话、RBAC、CSRF、审计
+- [~] T3.2 分类、标签、资源、来源、授权记录/证据和审核状态机（资源纵向切片完成；分类/标签管理待做）
+- [~] T3.3 夸克/百度/通用外链适配器、URL 安全和链接模型（存储/跳转校验完成；自动检查待做）
+- [~] T3.4 outbox、幂等 Worker、Meilisearch 索引与 `swap-indexes` 重建（增量索引完成；全量重建待做）
+- [~] T3.5 搜索首页、结果、详情、筛选、排序、空/错误/风控状态（基础页面与筛选完成；建议/高亮待做）
+- [~] T3.6 安全跳转、渠道模板、点击事件与去刷（安全跳转和基础去重完成；渠道模板管理待做）
 - [ ] T3.7 链接检查 Worker、退避、死信、检查历史、提醒
 - [ ] T3.8 提交、举报、侵权通知、恢复申请、黑名单和公开票据
 - [ ] T3.9 CSV/Markdown 预览确认导入、幂等和逐行报告

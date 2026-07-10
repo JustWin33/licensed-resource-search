@@ -4,6 +4,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import argon2 from 'argon2';
 import { v7 as uuidv7 } from 'uuid';
 import { getPrisma } from '@platform/db';
+import { adminPasswordViolations } from './password-policy';
 
 function normalize(value: string): string {
   return value.trim().toLowerCase();
@@ -35,8 +36,9 @@ async function main() {
   const password = await askHidden('密码: ');
   const confirm = await askHidden('确认密码: ');
   if (password !== confirm) throw new Error('两次密码不一致');
-  if (password.length < 12) throw new Error('密码至少 12 个字符');
   if (!username || username.length < 3) throw new Error('用户名至少 3 个字符');
+  const passwordViolations = adminPasswordViolations(password, [username, emailRaw]);
+  if (passwordViolations.length) throw new Error(passwordViolations.join('；'));
 
   const existing = await prisma.adminUser.findFirst({
     where: {

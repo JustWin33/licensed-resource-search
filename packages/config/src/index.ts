@@ -12,7 +12,14 @@ export const envSchema = z.object({
   URL_HASH_SECRET: z.string().min(32),
   ENCRYPTION_KEY: z.string().min(32),
   EVIDENCE_STORAGE_DRIVER: z.enum(['local_private', 's3_private']).default('local_private'),
-  LOCAL_EVIDENCE_ROOT: z.string().min(1).default('./evidence-storage'),
+  LOCAL_EVIDENCE_ROOT: z
+    .string()
+    .min(1)
+    .refine(
+      (value) => !/^[/\\]|^[A-Za-z]:/.test(value) && !value.split(/[\\/]/).includes('..'),
+      'LOCAL_EVIDENCE_ROOT must be a relative path without parent traversal',
+    )
+    .default('./evidence-storage'),
   S3_ENDPOINT: z.string().url().optional().or(z.literal('')),
   S3_REGION: z.string().optional().or(z.literal('')),
   S3_BUCKET: z.string().optional().or(z.literal('')),

@@ -24,6 +24,8 @@
 
 ## 2. 公共读取 API
 
+当前纵向切片已实现 `GET /api/v1/search`、`GET /api/v1/resources/{slug}` 和 `POST /api/v1/resources/{slug}/passcode`。搜索、提取码和跳转均使用 Redis 限流；提取码响应为 `no-store`，且仅在资源仍满足公开门槛时返回。
+
 | 方法/路径                                                                     | 用途             | 鉴权/限流                     |
 | ----------------------------------------------------------------------------- | ---------------- | ----------------------------- |
 | `GET /api/v1/search?q=&provider=&category=&rights=&linkStatus=&sort=&cursor=` | 搜索公开资源     | 匿名，搜索限流                |
@@ -45,13 +47,15 @@
 
 ## 4. 后台 API
 
+当前已实现会话 login/logout/session、资源列表/创建、授权证据上传、审核和发布。写接口要求严格 SameSite 会话、双提交 CSRF、RBAC，并在资源审核/发布时校验乐观锁版本。
+
 所有后台接口需服务端会话 + RBAC + CSRF（GET 不改变状态；敏感 GET 仍需权限）。主要路由：
 
 | 资源     | 路由示例                                                                                                                                    | 最小权限                       |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
 | 会话     | `POST /api/v1/admin/auth/login`, `POST /api/v1/admin/auth/logout`, `POST /api/v1/admin/auth/revoke-sessions`                                | 匿名/自身会话                  |
 | 资源     | `GET/POST/PATCH /api/v1/admin/resources`, `POST /api/v1/admin/resources/{id}/review`, `.../publish`, `.../hide`                             | resource.write/review/publish  |
-| 权利证据 | `/api/v1/admin/resources/{id}/authorizations`, `.../evidence`                                                                               | evidence.read + resource.write |
+| 权利证据 | `POST /api/v1/admin/authorizations/{id}/evidence`                                                                                           | evidence.read + resource.write |
 | 链接     | `/api/v1/admin/resources/{id}/links`, `POST /api/v1/admin/links/{id}/check`                                                                 | resource.write                 |
 | 词库配置 | `/api/v1/admin/categories`, `/api/v1/admin/tags`, `/api/v1/admin/synonyms`, `/api/v1/admin/suggestions`                                     | settings.write                 |
 | 治理     | `/api/v1/admin/submissions`, `/api/v1/admin/reports`, `/api/v1/admin/takedowns`, `/api/v1/admin/counter-notices`, `/api/v1/admin/blocklist` | governance.handle              |
