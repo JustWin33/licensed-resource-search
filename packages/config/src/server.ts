@@ -1,5 +1,4 @@
-import 'server-only';
-import { envSchema, type AppEnv } from './index.js';
+import { envSchema, type AppEnv } from './index';
 
 let cached: AppEnv | undefined;
 

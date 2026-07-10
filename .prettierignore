@@ -1,0 +1,7 @@
+apps/web/next-env.d.ts
+.next/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/

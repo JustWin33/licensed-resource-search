@@ -5,7 +5,7 @@
   "description": "合规优先、可审计的授权资料搜索与安全分发平台工程骨架",
   "packageManager": "pnpm@11.8.0",
   "engines": {
-    "node": ">=24.18.0 <25",
+    "node": "24.17.0",
     "pnpm": "11.8.0"
   },
   "scripts": {
@@ -22,6 +22,7 @@
     "db:seed": "pnpm --filter @platform/db prisma:seed",
     "admin:create": "pnpm --filter @platform/core admin:create",
     "search:smoke": "pnpm --filter @platform/search smoke",
+    "search:benchmark": "pnpm --filter @platform/search benchmark",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "ci:secrets": "node scripts/check-secrets.mjs"
   },

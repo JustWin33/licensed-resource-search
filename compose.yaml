@@ -11,7 +11,7 @@ services:
     ports:
       - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
@@ -65,10 +65,35 @@ services:
       retries: 20
     networks: [internal]
 
+  typesense:
+    profiles: [search-benchmark]
+    image: typesense/typesense:29.0
+    restart: unless-stopped
+    command:
+      [
+        '--data-dir',
+        '/data',
+        '--api-key',
+        'dev-only-typesense-key-change-me',
+        '--listen-port',
+        '8108',
+      ]
+    ports:
+      - '127.0.0.1:${TYPESENSE_PORT:-8108}:8108'
+    volumes:
+      - typesense-data:/data
+    healthcheck:
+      test: ['CMD-SHELL', "bash -c '</dev/tcp/127.0.0.1/8108' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [internal]
+
 volumes:
   postgres-data:
   redis-data:
   meilisearch-data:
+  typesense-data:
 
 networks:
   internal:

@@ -13,7 +13,7 @@
 
 ## 本地环境
 
-要求 Node.js `24.18.0`、pnpm `11.8.0`。开发依赖使用 Docker Compose；本机可使用 Docker Desktop 或 Docker CLI + Colima。复制 `.env.example` 为 `.env` 后再启动服务。
+要求 Node.js `24.17.0`、pnpm `11.8.0`。开发依赖使用 Docker Compose；本机可使用 Docker Desktop 或 Docker CLI + Colima。复制 `.env.example` 为 `.env` 后再启动服务。
 
 ```bash
 pnpm install --frozen-lockfile

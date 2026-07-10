@@ -1,2 +1,1 @@
-export { prisma } from './client.js';
-
+export { getPrisma } from './client';

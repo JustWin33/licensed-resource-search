@@ -3,11 +3,13 @@ import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import argon2 from 'argon2';
 import { v7 as uuidv7 } from 'uuid';
-import { prisma } from '@platform/db';
+import { getPrisma } from '@platform/db';
 
 function normalize(value: string): string {
   return value.trim().toLowerCase();
 }
+
+const prisma = getPrisma();
 
 async function askHidden(question: string): Promise<string> {
   if (!input.isTTY) throw new Error('pnpm admin:create requires an interactive TTY');

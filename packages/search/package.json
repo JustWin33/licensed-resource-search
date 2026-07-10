@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "benchmark": "tsx src/benchmark.ts",
     "smoke": "tsx src/smoke.ts",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json",
@@ -15,6 +16,8 @@
   "dependencies": {
     "@platform/config": "workspace:*",
     "meilisearch": "0.54.0",
+    "pinyin-pro": "3.28.1",
+    "typesense": "3.0.6",
     "uuid": "11.1.0"
   },
   "devDependencies": {

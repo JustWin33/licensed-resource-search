@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { v7 as uuidv7 } from 'uuid';
-import { prisma } from '../src/client.js';
+import { getPrisma } from '../src/client.js';
 
 const permissions = [
   ['resource.read_public', 'Read public resource DTOs'],
@@ -15,6 +15,8 @@ const permissions = [
   ['audit.read', 'Read audit logs'],
   ['admin.manage', 'Manage admin users, roles and permissions'],
 ] as const;
+
+const prisma = getPrisma();
 
 async function main() {
   const permissionRows = new Map<string, string>();

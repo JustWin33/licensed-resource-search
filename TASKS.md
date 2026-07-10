@@ -19,13 +19,13 @@
 
 ## 2. 阶段二：初始化（待确认）
 
-- [ ] T2.1 pnpm workspace、Node LTS、锁文件、TypeScript strict、共享配置
-- [ ] T2.2 Next.js web、Worker、共享 packages 边界和 server-only 检查
-- [ ] T2.3 PostgreSQL/Prisma schema、迁移、UUIDv7、种子和一次性 admin CLI
-- [ ] T2.4 Redis/BullMQ、Meilisearch、Docker Compose、环境变量 schema
-- [ ] T2.5 health/readiness、结构化日志、请求 ID、基础指标
-- [ ] T2.6 lint/typecheck/unit/integration 基线与 GitHub Actions
-- [ ] T2.7 搜索技术验证：在正式搜索模块实现前，用 100+ 条业务语料对比 Meilisearch/Typesense；输出 `docs/SEARCH_BENCHMARK.md`、`test/fixtures/search-corpus.json`、`test/fixtures/search-queries.json`
+- [x] T2.1 pnpm workspace、Node LTS、锁文件、TypeScript strict、共享配置
+- [x] T2.2 Next.js web、Worker、共享 packages 边界和 server-only 检查
+- [x] T2.3 PostgreSQL/Prisma schema、迁移、UUIDv7、种子和一次性 admin CLI
+- [x] T2.4 Redis/BullMQ、Meilisearch、Docker Compose、环境变量 schema
+- [x] T2.5 health/readiness、结构化日志、请求 ID、基础指标
+- [x] T2.6 lint/typecheck/unit/integration 基线与 GitHub Actions
+- [x] T2.7 搜索技术验证：在正式搜索模块实现前，用 105 条业务语料对比 Meilisearch/Typesense；输出 `docs/SEARCH_BENCHMARK.md`、`test/fixtures/search-corpus.json`、`test/fixtures/search-queries.json`
 
 ## 3. 阶段三：MVP 实现（待确认）
 
