@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="开源、合规优先、可审计的授权网盘资料搜索与安全分发平台。" />
+    <meta name="theme-color" content="#f7f8fb" />
+    <meta property="og:title" content="授权资料搜索" />
+    <meta property="og:description" content="只检索已经审核且具有授权依据的公开资料。" />
+    <meta property="og:type" content="website" />
+    <title>授权资料搜索</title>
+    <link rel="stylesheet" href="./assets/site.css" />
+    <script src="./assets/site.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="授权资料搜索首页">
+        <span class="brand-mark" aria-hidden="true">搜</span>
+        <span>
+          <strong>授权资料搜索</strong>
+          <small>Licensed Resource Search</small>
+        </span>
+      </a>
+      <nav class="header-nav" aria-label="站点导航">
+        <a href="#rules">收录规则</a>
+        <a href="https://github.com/JustWin33/licensed-resource-search">开源代码</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">OPEN · LICENSED · AUDITABLE</p>
+          <h1 id="hero-title">找得到，也说得清来源。</h1>
+          <p class="hero-description">
+            只检索已经审核、具有授权依据的公开资料。不抓取私人群组，不聚合未授权内容。
+          </p>
+        </div>
+
+        <form class="search-form" id="search-form" role="search">
+          <label class="sr-only" for="search-input">搜索资料</label>
+          <span class="search-icon" aria-hidden="true"></span>
+          <input
+            id="search-input"
+            name="q"
+            type="search"
+            autocomplete="off"
+            maxlength="80"
+            placeholder="搜索名称、简介、分类或标签"
+          />
+          <button type="submit">搜索</button>
+        </form>
+
+        <div class="quick-row" id="quick-row" hidden>
+          <span>最近搜索</span>
+          <div id="history-list" class="chip-list"></div>
+          <button class="text-button" id="clear-history" type="button">清除</button>
+        </div>
+      </section>
+
+      <section class="search-panel" aria-label="搜索筛选与结果">
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">网盘来源</span>
+            <div class="segmented" id="provider-filters" role="group" aria-label="网盘来源">
+              <button class="active" type="button" data-provider="all">全部</button>
+              <button type="button" data-provider="quark">夸克</button>
+              <button type="button" data-provider="baidu">百度</button>
+              <button type="button" data-provider="general">通用外链</button>
+            </div>
+          </div>
+          <div class="filter-group category-filter">
+            <label class="filter-label" for="category-select">资料分类</label>
+            <select id="category-select">
+              <option value="all">全部分类</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="results-heading">
+          <div>
+            <p class="section-kicker">PUBLIC INDEX</p>
+            <h2 id="results-title">公开索引</h2>
+          </div>
+          <p id="result-count" aria-live="polite">正在读取资源清单…</p>
+        </div>
+
+        <div id="result-list" class="result-list" aria-live="polite"></div>
+
+        <div id="empty-state" class="empty-state" hidden>
+          <span class="empty-symbol" aria-hidden="true">⌕</span>
+          <h3>没有找到匹配的资料</h3>
+          <p>换一个关键词或筛选条件试试。公开索引只展示已经完成授权审核的内容。</p>
+          <button id="reset-search" type="button">查看全部</button>
+        </div>
+
+        <div id="load-error" class="empty-state" hidden>
+          <span class="empty-symbol" aria-hidden="true">!</span>
+          <h3>资源清单暂时无法读取</h3>
+          <p>请稍后刷新页面，或前往 GitHub 查看项目状态。</p>
+          <a class="button-link" href="https://github.com/JustWin33/licensed-resource-search/issues"
+            >查看项目状态</a
+          >
+        </div>
+      </section>
+
+      <section class="principles" id="rules" aria-labelledby="rules-title">
+        <div class="principles-intro">
+          <p class="section-kicker">WHY THIS PROJECT</p>
+          <h2 id="rules-title">搜索体验可以简洁，内容边界必须清楚。</h2>
+        </div>
+        <div class="principle-grid">
+          <article>
+            <span>01</span>
+            <h3>授权后收录</h3>
+            <p>仅接收自有、明确授权、开放许可或公有领域资料，并保留可审计依据。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>公开源优先</h3>
+            <p>不抓取搜索引擎、私人群组、登录后内容，也不绕过验证码和网盘风控。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>链接先确认</h3>
+            <p>跳转前展示目标站点和推广关系；链接失效、撤权或被投诉后立即停止展示。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Licensed Resource Search · Apache-2.0 开源</p>
+      <div>
+        <a href="https://github.com/JustWin33/licensed-resource-search/blob/main/README.md"
+          >使用文档</a
+        >
+        <a href="https://github.com/JustWin33/licensed-resource-search/blob/main/docs/COMPLIANCE.md"
+          >合规说明</a
+        >
+        <a href="https://github.com/JustWin33/licensed-resource-search/issues">问题反馈</a>
+      </div>
+    </footer>
+
+    <dialog id="jump-dialog" class="jump-dialog" aria-labelledby="jump-title">
+      <form method="dialog">
+        <button class="dialog-close" value="cancel" aria-label="关闭">×</button>
+        <p class="section-kicker">EXTERNAL LINK</p>
+        <h2 id="jump-title">即将离开本站</h2>
+        <p>你将前往第三方公开页面，请确认目标域名并遵守其服务条款。</p>
+        <div class="destination">
+          <span>目标站点</span>
+          <strong id="destination-host"></strong>
+        </div>
+        <p id="promotion-note" class="promotion-note" hidden>
+          此链接可能包含推广或渠道关系，不影响资料的授权审核结果。
+        </p>
+        <div class="dialog-actions">
+          <button value="cancel" class="secondary-button">取消</button>
+          <a
+            id="confirm-jump"
+            class="primary-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            >确认前往</a
+          >
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
