@@ -1,0 +1,22 @@
+[
+  {
+    "id": "licensed-resource-search",
+    "title": "Licensed Resource Search 开源项目源码",
+    "description": "合规优先、可审计、可自托管的授权资料搜索与安全分发平台，包含管理员审核、授权证据、搜索索引、安全跳转与投诉治理等功能。",
+    "category": "开源项目",
+    "rightsStatus": "open_licensed",
+    "sourceName": "JustWin33 / GitHub",
+    "licenseName": "Apache License 2.0",
+    "licenseUrl": "https://github.com/JustWin33/licensed-resource-search/blob/main/LICENSE",
+    "tags": ["开源", "资料搜索", "Next.js", "合规", "自托管"],
+    "updatedAt": "2026-07-10T00:00:00.000Z",
+    "links": [
+      {
+        "provider": "general",
+        "label": "查看 GitHub",
+        "url": "https://github.com/JustWin33/licensed-resource-search",
+        "promoted": false
+      }
+    ]
+  }
+]
