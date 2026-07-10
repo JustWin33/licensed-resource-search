@@ -26,6 +26,10 @@
 
 未完成一次可复现演练前，RPO/RTO 只能标为目标，不能标为达成。备份恢复测试不得使用真实生产秘密或资料副本到不受控环境。
 
+仓库提供 `pnpm backup` 和 `pnpm restore`。备份通过容器内 `pg_dump -Fc` 输出，并在落盘前用 OpenSSL AES-256-CBC/PBKDF2 加密；口令只从 `BACKUP_ENCRYPTION_PASSPHRASE` 环境变量读取。恢复额外要求 `RESTORE_CONFIRM=licensed_resource_search`，恢复后必须运行迁移、原子重建搜索索引和 readiness/core-flow 抽样。
+
+2026-07-10 已在本地空业务数据环境完成一次真实演练：生成 103 KiB 加密备份、清理恢复 PostgreSQL、确认 4 个迁移无遗漏，并以 0 文档场景完成 Meilisearch 原子重建。该结果证明脚本可执行，不代表生产 RPO 24h/RTO 4h 已达成。
+
 ## 5. 升级、回滚与数据迁移
 
 依赖升级先生成 PR，运行 lint/typecheck/unit/integration/e2e/扫描；数据库迁移采用向前可部署策略：先加兼容字段/索引，再切换读写，最后清理旧字段。迁移前备份，禁止 `db push` 作为生产方案。

@@ -1,4 +1,4 @@
-import { normalizeCloudDriveUrl } from '@platform/cloud-drives';
+import { buildConfiguredRedirectUrl, normalizeCloudDriveUrl } from '@platform/cloud-drives';
 import { hmacValue } from '@platform/core';
 import { getPrisma } from '@platform/db';
 import { v7 as uuidv7 } from 'uuid';
@@ -6,6 +6,7 @@ import { getServerEnv } from '@web/src/server-env';
 import { errorResponse, HttpError, requestId } from '@web/src/server/http';
 import { getPublicResourceById } from '@web/src/server/resource-service';
 import { enforceRateLimit } from '@web/src/server/rate-limit';
+import { analyticsEnabled } from '@web/src/server/privacy';
 
 export async function GET(
   request: Request,
@@ -36,24 +37,43 @@ export async function GET(
           (value): value is string => typeof value === 'string',
         )
       : [];
-    const target = normalizeCloudDriveUrl(new URL(link.normalizedUrl), provider, configuredHosts);
-    const channelSlug = new URL(request.url).searchParams.get('channel');
-    if (channelSlug) {
-      const channel = await getPrisma().redirectChannel.findFirst({
-        where: { slug: channelSlug, providerId: link.providerId, isEnabled: true },
+    let target = normalizeCloudDriveUrl(new URL(link.normalizedUrl), provider, configuredHosts);
+    const requestedChannelSlug = new URL(request.url).searchParams.get('channel');
+    let channel = link.redirectTemplate?.isEnabled ? link.redirectTemplate : null;
+    if (requestedChannelSlug) {
+      channel = await getPrisma().redirectChannel.findFirst({
+        where: { slug: requestedChannelSlug, providerId: link.providerId, isEnabled: true },
       });
       if (!channel) throw new HttpError(404, 'CHANNEL_NOT_FOUND', 'Redirect channel not found');
     }
+    if (channel) {
+      const allowedPlaceholders = Array.isArray(channel.allowedPlaceholders)
+        ? channel.allowedPlaceholders.filter((value): value is string => typeof value === 'string')
+        : [];
+      try {
+        target = buildConfiguredRedirectUrl(
+          channel.template,
+          allowedPlaceholders,
+          { target_url: target.toString(), resource_id: resourceId, provider },
+          configuredHosts,
+        );
+      } catch {
+        throw new HttpError(409, 'CHANNEL_TEMPLATE_INVALID', 'Redirect channel is unavailable');
+      }
+    }
+    const channelSlug = channel?.slug ?? null;
     const env = getServerEnv();
     const bucketStart = new Date(Math.floor(Date.now() / 300_000) * 300_000);
     const dedupeKey = hmacValue(
       `${resourceId}:${provider}:${channelSlug ?? ''}:${bucketStart.toISOString()}:${clientFingerprint}`,
       env.URL_HASH_SECRET,
     );
-    const duplicate = await getPrisma().clickEvent.findFirst({
-      where: { dedupeKey, createdAt: { gte: bucketStart } },
-      select: { id: true },
-    });
+    const duplicate = (await analyticsEnabled())
+      ? await getPrisma().clickEvent.findFirst({
+          where: { dedupeKey, createdAt: { gte: bucketStart } },
+          select: { id: true },
+        })
+      : { id: 'analytics-disabled' };
     if (!duplicate) {
       await getPrisma().clickEvent.create({
         data: {

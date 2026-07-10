@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeCloudDriveUrl, validateExternalUrl, validatePublicHttpsUrl } from './index.js';
+import {
+  buildConfiguredRedirectUrl,
+  classifyHttpStatus,
+  isPublicNetworkAddress,
+  normalizeCloudDriveUrl,
+  validateExternalUrl,
+  validatePublicHttpsUrl,
+  validateRedirectTemplate,
+} from './index.js';
 
 describe('external URL validation', () => {
   it('rejects private hosts and non-https URLs', () => {
@@ -21,5 +29,43 @@ describe('external URL validation', () => {
       'baidu',
     );
     expect(normalized.toString()).toBe('https://pan.baidu.com/s/abc');
+  });
+});
+
+describe('link checking and redirect templates', () => {
+  it('rejects private and reserved resolved addresses', () => {
+    expect(isPublicNetworkAddress('127.0.0.1')).toBe(false);
+    expect(isPublicNetworkAddress('10.1.2.3')).toBe(false);
+    expect(isPublicNetworkAddress('::1')).toBe(false);
+    expect(isPublicNetworkAddress('8.8.8.8')).toBe(true);
+  });
+
+  it('classifies deterministic failures separately from access controls', () => {
+    expect(classifyHttpStatus(404).status).toBe('expired');
+    expect(classifyHttpStatus(403).status).toBe('risk_controlled');
+    expect(classifyHttpStatus(200, true).status).toBe('need_password');
+  });
+
+  it('only renders allowlisted placeholders to allowlisted hosts', () => {
+    expect(
+      validateRedirectTemplate('https://pan.baidu.com/share?url={target_url}', ['target_url']),
+    ).toEqual({ ok: true });
+    expect(validateRedirectTemplate('https://example.com/{secret}', ['target_url']).ok).toBe(false);
+    expect(
+      buildConfiguredRedirectUrl(
+        'https://pan.baidu.com/share?url={target_url}',
+        ['target_url'],
+        { target_url: 'https://pan.baidu.com/s/abc' },
+        ['pan.baidu.com'],
+      ).hostname,
+    ).toBe('pan.baidu.com');
+    expect(() =>
+      buildConfiguredRedirectUrl(
+        'https://evil.example/forward?url={target_url}',
+        ['target_url'],
+        { target_url: 'https://pan.baidu.com/s/abc' },
+        ['pan.baidu.com'],
+      ),
+    ).toThrow('host_not_allowed');
   });
 });

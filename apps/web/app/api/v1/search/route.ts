@@ -6,7 +6,17 @@ import { enforceRateLimit } from '@web/src/server/rate-limit';
 const schema = z.object({
   q: z.string().trim().min(1).max(200),
   provider: z.enum(['quark', 'baidu', 'generic']).optional(),
+  category: z
+    .string()
+    .trim()
+    .min(1)
+    .max(120)
+    .regex(/^[\p{Letter}\p{Number}-]+$/u)
+    .optional(),
   rights: z.enum(['owned', 'authorized', 'open_licensed', 'public_domain']).optional(),
+  linkStatus: z
+    .enum(['pending', 'available', 'need_password', 'risk_controlled', 'unknown'])
+    .optional(),
   sort: z.enum(['relevance', 'newest', 'popular']).default('relevance'),
   limit: z.coerce.number().int().min(1).max(50).default(20),
 });

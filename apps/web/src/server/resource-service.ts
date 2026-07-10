@@ -9,42 +9,22 @@ import { z } from 'zod';
 import { getServerEnv } from '../server-env';
 import type { AdminIdentity } from './auth';
 import { HttpError } from './http';
+import type { CreateResourceInput } from './resource-input';
+
+export { createResourceSchema } from './resource-input';
+export type { CreateResourceInput } from './resource-input';
 
 const rights = z.enum(['owned', 'authorized', 'open_licensed', 'public_domain']);
-
-export const createResourceSchema = z.object({
-  title: z.string().trim().min(2).max(300),
-  summary: z.string().trim().min(10).max(10_000),
-  ownerType: z.enum(['deployer', 'authorized_submitter', 'third_party_rightsholder']),
-  rightsStatus: rights,
-  source: z.object({
-    url: z.string().url().max(2_000),
-    name: z.string().trim().min(2).max(200),
-    type: z.enum([
-      'official_site',
-      'author_page',
-      'license_registry',
-      'public_archive',
-      'user_submitted',
-      'other',
-    ]),
-  }),
-  authorization: z.object({
-    licenseName: z.string().trim().max(200).optional(),
-    licenseVersion: z.string().trim().max(80).optional(),
-    licenseUrl: z.string().url().max(2_000).optional(),
-    verificationBasis: z.string().trim().min(10).max(5_000),
-    allowsCommercialPromotion: z.boolean().default(false),
-    startsAt: z.string().datetime().optional(),
-    endsAt: z.string().datetime().optional(),
-  }),
-  link: z.object({
-    provider: z.enum(['quark', 'baidu', 'generic']),
-    url: z.string().url().max(2_000),
-    passcode: z.string().trim().min(1).max(32).optional(),
-    isPrimary: z.boolean().default(true),
-  }),
-});
+const categoryIdsSchema = z
+  .array(z.string().uuid())
+  .max(10)
+  .default([])
+  .transform((values) => [...new Set(values)]);
+const tagIdsSchema = z
+  .array(z.string().uuid())
+  .max(20)
+  .default([])
+  .transform((values) => [...new Set(values)]);
 
 export const reviewResourceSchema = z.object({
   decision: z.enum(['approved', 'needs_changes', 'rejected']),
@@ -56,7 +36,15 @@ export const publishResourceSchema = z.object({
   expectedVersion: z.number().int().positive(),
 });
 
-export type CreateResourceInput = z.infer<typeof createResourceSchema>;
+export const updateResourceSchema = z.object({
+  title: z.string().trim().min(2).max(300),
+  summary: z.string().trim().min(10).max(10_000),
+  ownerType: z.enum(['deployer', 'authorized_submitter', 'third_party_rightsholder']),
+  rightsStatus: rights,
+  categoryIds: categoryIdsSchema,
+  tagIds: tagIdsSchema,
+  expectedVersion: z.number().int().positive(),
+});
 
 function allowedHosts(value: Prisma.JsonValue): string[] {
   return Array.isArray(value)
@@ -109,9 +97,24 @@ function isEnabledLink(link: {
   return link.isEnabled && !link.deletedAt && !['expired', 'disabled'].includes(link.currentStatus);
 }
 
+async function validateTaxonomySelection(categoryIds: string[], tagIds: string[]) {
+  const prisma = getPrisma();
+  const [categoryCount, tagCount] = await Promise.all([
+    prisma.category.count({ where: { id: { in: categoryIds }, isEnabled: true } }),
+    prisma.tag.count({ where: { id: { in: tagIds } } }),
+  ]);
+  if (categoryCount !== categoryIds.length) {
+    throw new HttpError(422, 'CATEGORY_SELECTION_INVALID', 'One or more categories are invalid');
+  }
+  if (tagCount !== tagIds.length) {
+    throw new HttpError(422, 'TAG_SELECTION_INVALID', 'One or more tags are invalid');
+  }
+}
+
 export async function createResource(input: CreateResourceInput, actor: AdminIdentity, id: string) {
   const prisma = getPrisma();
   const env = getServerEnv();
+  await validateTaxonomySelection(input.categoryIds, input.tagIds);
   const provider = await prisma.cloudProvider.findUnique({ where: { slug: input.link.provider } });
   if (!provider?.isEnabled)
     throw new HttpError(422, 'PROVIDER_DISABLED', 'Cloud provider is disabled');
@@ -153,6 +156,14 @@ export async function createResource(input: CreateResourceInput, actor: AdminIde
           reviewStatus: 'pending_review',
           publicationStatus: 'draft',
           createdBy: actor.id,
+          categories: {
+            create: input.categoryIds.map((categoryId) => ({
+              category: { connect: { id: categoryId } },
+            })),
+          },
+          tags: {
+            create: input.tagIds.map((tagId) => ({ tag: { connect: { id: tagId } } })),
+          },
         },
       });
       await tx.resourceSource.create({
@@ -197,6 +208,16 @@ export async function createResource(input: CreateResourceInput, actor: AdminIde
           isEnabled: true,
         },
       });
+      await tx.outboxEvent.create({
+        data: {
+          id: uuidv7(),
+          aggregateType: 'cloud_link',
+          aggregateId: cloudLinkId,
+          eventType: 'link_check_requested',
+          payloadVersion: 1,
+          payloadJson: { cloudLinkId, reason: 'created' },
+        },
+      });
       await tx.auditLog.create({
         data: {
           id: uuidv7(),
@@ -233,6 +254,8 @@ export async function listAdminResources() {
     take: 100,
     include: {
       creator: { select: { usernameNormalized: true } },
+      categories: { include: { category: true } },
+      tags: { include: { tag: true } },
       sources: true,
       authorizations: { include: { evidence: true } },
       cloudLinks: { include: { provider: true } },
@@ -252,6 +275,12 @@ export async function listAdminResources() {
     createdAt: resource.createdAt.toISOString(),
     updatedAt: resource.updatedAt.toISOString(),
     creator: resource.creator?.usernameNormalized ?? null,
+    categories: resource.categories.map(({ category }) => ({
+      id: category.id,
+      slug: category.slug,
+      name: category.name,
+    })),
+    tags: resource.tags.map(({ tag }) => ({ id: tag.id, slug: tag.slug, name: tag.name })),
     sources: resource.sources.map((source) => ({
       id: source.id,
       name: source.sourceName,
@@ -282,6 +311,126 @@ export async function listAdminResources() {
       hasPasscode: Boolean(link.passcodeCiphertext),
     })),
   }));
+}
+
+export async function getAdminResource(resourceId: string) {
+  const resource = await getPrisma().resource.findFirst({
+    where: { id: resourceId, deletedAt: null },
+    include: {
+      categories: { include: { category: true } },
+      tags: { include: { tag: true } },
+      sources: true,
+      authorizations: { include: { evidence: true } },
+      cloudLinks: { include: { provider: true } },
+    },
+  });
+  if (!resource) throw new HttpError(404, 'RESOURCE_NOT_FOUND', 'Resource not found');
+  return resource;
+}
+
+export function adminResourceEditDto(
+  resource: NonNullable<Awaited<ReturnType<typeof getAdminResource>>>,
+) {
+  return {
+    id: resource.id,
+    title: resource.title,
+    summary: resource.summary,
+    ownerType: resource.ownerType,
+    rightsStatus: resource.rightsStatus,
+    version: resource.version,
+    categoryIds: resource.categories.map(({ categoryId }) => categoryId),
+    tagIds: resource.tags.map(({ tagId }) => tagId),
+  };
+}
+
+export async function updateResource(
+  resourceId: string,
+  input: z.infer<typeof updateResourceSchema>,
+  actor: AdminIdentity,
+  requestId: string,
+) {
+  await validateTaxonomySelection(input.categoryIds, input.tagIds);
+  const prisma = getPrisma();
+  const current = await prisma.resource.findFirst({
+    where: { id: resourceId, deletedAt: null },
+  });
+  if (!current) throw new HttpError(404, 'RESOURCE_NOT_FOUND', 'Resource not found');
+  if (current.version !== input.expectedVersion) {
+    throw new HttpError(409, 'VERSION_CONFLICT', 'Resource has been modified');
+  }
+  return prisma.$transaction(async (tx) => {
+    const write = await tx.resource.updateMany({
+      where: { id: resourceId, version: input.expectedVersion, deletedAt: null },
+      data: {
+        title: input.title,
+        summary: input.summary,
+        ownerType: input.ownerType,
+        rightsStatus: input.rightsStatus,
+        reviewStatus: 'pending_review',
+        publicationStatus: 'draft',
+        publishedAt: null,
+        reviewedBy: null,
+        reviewedAt: null,
+        reviewNoteInternal: null,
+        version: { increment: 1 },
+      },
+    });
+    if (write.count !== 1) {
+      throw new HttpError(409, 'VERSION_CONFLICT', 'Resource has been modified');
+    }
+    await tx.resourceCategory.deleteMany({ where: { resourceId } });
+    await tx.resourceTag.deleteMany({ where: { resourceId } });
+    if (input.categoryIds.length) {
+      await tx.resourceCategory.createMany({
+        data: input.categoryIds.map((categoryId) => ({ resourceId, categoryId })),
+      });
+    }
+    if (input.tagIds.length) {
+      await tx.resourceTag.createMany({
+        data: input.tagIds.map((tagId) => ({ resourceId, tagId })),
+      });
+    }
+    if (current.rightsStatus !== input.rightsStatus) {
+      await tx.authorizationRecord.updateMany({
+        where: { resourceId, status: { in: ['pending', 'active'] } },
+        data: {
+          rightsType: input.rightsStatus,
+          status: 'pending',
+          verifiedBy: null,
+          verifiedAt: null,
+        },
+      });
+    }
+    if (current.publicationStatus === 'published') {
+      await tx.outboxEvent.create({
+        data: {
+          id: uuidv7(),
+          aggregateType: 'resource',
+          aggregateId: resourceId,
+          eventType: 'resource_index_removed',
+          payloadVersion: 1,
+          payloadJson: { resourceId },
+        },
+      });
+    }
+    await tx.auditLog.create({
+      data: {
+        id: uuidv7(),
+        actorType: 'admin_user',
+        actorId: actor.id,
+        action: 'resource.update_and_resubmit',
+        targetType: 'resource',
+        targetId: resourceId,
+        requestId,
+        success: true,
+        changedFieldsSummary: {
+          changed: ['title', 'summary', 'owner_type', 'rights_status', 'categories', 'tags'],
+          forcedReview: true,
+        },
+      },
+    });
+    return tx.resource.findUniqueOrThrow({ where: { id: resourceId } });
+  });
 }
 
 export async function reviewResource(
@@ -501,7 +650,7 @@ export async function getPublicResourceBySlug(slug: string) {
           deletedAt: null,
           currentStatus: { notIn: ['expired', 'disabled'] },
         },
-        include: { provider: true },
+        include: { provider: true, redirectTemplate: true },
       },
     },
   });
@@ -552,7 +701,7 @@ export async function getPublicResourceById(id: string) {
           deletedAt: null,
           currentStatus: { notIn: ['expired', 'disabled'] },
         },
-        include: { provider: true },
+        include: { provider: true, redirectTemplate: true },
       },
     },
   });

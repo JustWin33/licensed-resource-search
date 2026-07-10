@@ -14,6 +14,7 @@ export default [
   {
     files: [
       'apps/worker/src/main.ts',
+      'apps/worker/src/rebuild-search.ts',
       'packages/core/src/admin-create.ts',
       'packages/db/prisma/seed.ts',
       'packages/search/src/benchmark.ts',
