@@ -1,0 +1,737 @@
+[
+  {
+    "id": "c-001",
+    "title": "Claude Code 入门教程",
+    "summary": "授权的 AI 编程学习资料",
+    "tags": ["Claude Code", "AI"],
+    "category": "AI"
+  },
+  {
+    "id": "c-002",
+    "title": "Claude Code 工程实践",
+    "summary": "开放许可的命令行编程指南",
+    "tags": ["Claude Code", "工程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-003",
+    "title": "Codex 使用教程",
+    "summary": "授权的代码代理基础资料",
+    "tags": ["Codex", "教程"],
+    "category": "AI"
+  },
+  {
+    "id": "c-004",
+    "title": "AI 学习路径",
+    "summary": "原创人工智能学习资料",
+    "tags": ["AI", "学习"],
+    "category": "AI"
+  },
+  {
+    "id": "c-005",
+    "title": "人工智能基础",
+    "summary": "开放许可的 AI 基础课程",
+    "tags": ["人工智能", "基础"],
+    "category": "AI"
+  },
+  {
+    "id": "c-006",
+    "title": "提示词工程入门",
+    "summary": "原创提示词合集与说明",
+    "tags": ["提示词", "工程"],
+    "category": "AI"
+  },
+  {
+    "id": "c-007",
+    "title": "提示词设计案例",
+    "summary": "已授权的提示词实践资料",
+    "tags": ["提示词", "案例"],
+    "category": "AI"
+  },
+  {
+    "id": "c-008",
+    "title": "开源项目导航",
+    "summary": "可再分发的开源项目合集",
+    "tags": ["开源", "项目"],
+    "category": "开源"
+  },
+  {
+    "id": "c-009",
+    "title": "开源工程实战",
+    "summary": "原创开源工程实践资料",
+    "tags": ["开源", "工程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-010",
+    "title": "Python 编程教程",
+    "summary": "开放许可的 Python 教程",
+    "tags": ["Python", "编程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-011",
+    "title": "TypeScript 类型设计",
+    "summary": "授权的 TypeScript 资料",
+    "tags": ["TypeScript", "编程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-012",
+    "title": "Next.js 应用开发",
+    "summary": "原创 Next.js 工程资料",
+    "tags": ["Next.js", "Web"],
+    "category": "编程"
+  },
+  {
+    "id": "c-013",
+    "title": "PostgreSQL 数据库基础",
+    "summary": "开放许可数据库教程",
+    "tags": ["PostgreSQL", "数据库"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-014",
+    "title": "Redis 队列设计",
+    "summary": "已授权的 Redis 实践资料",
+    "tags": ["Redis", "队列"],
+    "category": "后端"
+  },
+  {
+    "id": "c-015",
+    "title": "Docker Compose 部署",
+    "summary": "原创容器化部署指南",
+    "tags": ["Docker", "部署"],
+    "category": "运维"
+  },
+  {
+    "id": "c-016",
+    "title": "Caddy 反向代理",
+    "summary": "开放许可的 Caddy 配置资料",
+    "tags": ["Caddy", "部署"],
+    "category": "运维"
+  },
+  {
+    "id": "c-017",
+    "title": "Web 安全基础",
+    "summary": "授权的 Web 安全学习资料",
+    "tags": ["安全", "Web"],
+    "category": "安全"
+  },
+  {
+    "id": "c-018",
+    "title": "SSRF 防护指南",
+    "summary": "原创 SSRF 威胁模型资料",
+    "tags": ["SSRF", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-019",
+    "title": "开放许可入门",
+    "summary": "公共版权与开放许可说明",
+    "tags": ["许可", "版权"],
+    "category": "合规"
+  },
+  {
+    "id": "c-020",
+    "title": "公有领域资料整理",
+    "summary": "公有领域依据与来源索引",
+    "tags": ["公有领域", "版权"],
+    "category": "合规"
+  },
+  {
+    "id": "c-021",
+    "title": "Claude Code 快速开始",
+    "summary": "授权的 Claude Code 快速开始资料",
+    "tags": ["Claude Code", "快速开始"],
+    "category": "AI"
+  },
+  {
+    "id": "c-022",
+    "title": "Claude Code 命令行技巧",
+    "summary": "原创命令行技巧合集",
+    "tags": ["Claude Code", "CLI"],
+    "category": "AI"
+  },
+  {
+    "id": "c-023",
+    "title": "Claude Code 自动化工作流",
+    "summary": "开放许可的自动化资料",
+    "tags": ["Claude Code", "自动化"],
+    "category": "AI"
+  },
+  {
+    "id": "c-024",
+    "title": "Codex 代理工作流",
+    "summary": "已授权的 Codex 工作流教程",
+    "tags": ["Codex", "工作流"],
+    "category": "AI"
+  },
+  {
+    "id": "c-025",
+    "title": "AI Agent 工程",
+    "summary": "原创 AI Agent 工程资料",
+    "tags": ["Agent", "工程"],
+    "category": "AI"
+  },
+  {
+    "id": "c-026",
+    "title": "大模型应用设计",
+    "summary": "开放许可的大模型应用教程",
+    "tags": ["大模型", "应用"],
+    "category": "AI"
+  },
+  {
+    "id": "c-027",
+    "title": "机器学习入门",
+    "summary": "公有领域机器学习资料",
+    "tags": ["机器学习", "基础"],
+    "category": "AI"
+  },
+  {
+    "id": "c-028",
+    "title": "深度学习基础",
+    "summary": "开放许可深度学习教程",
+    "tags": ["深度学习", "基础"],
+    "category": "AI"
+  },
+  {
+    "id": "c-029",
+    "title": "自然语言处理实践",
+    "summary": "授权 NLP 实践资料",
+    "tags": ["NLP", "语言"],
+    "category": "AI"
+  },
+  {
+    "id": "c-030",
+    "title": "检索增强生成指南",
+    "summary": "原创 RAG 工程指南",
+    "tags": ["RAG", "检索"],
+    "category": "AI"
+  },
+  {
+    "id": "c-031",
+    "title": "API 设计规范",
+    "summary": "开放许可 API 设计资料",
+    "tags": ["API", "后端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-032",
+    "title": "REST 接口实践",
+    "summary": "授权 REST API 教程",
+    "tags": ["REST", "API"],
+    "category": "编程"
+  },
+  {
+    "id": "c-033",
+    "title": "GraphQL 入门",
+    "summary": "原创 GraphQL 学习资料",
+    "tags": ["GraphQL", "API"],
+    "category": "编程"
+  },
+  {
+    "id": "c-034",
+    "title": "React 组件设计",
+    "summary": "开放许可 React 资料",
+    "tags": ["React", "前端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-035",
+    "title": "Vue 应用开发",
+    "summary": "授权 Vue 应用教程",
+    "tags": ["Vue", "前端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-036",
+    "title": "CSS 布局指南",
+    "summary": "原创 CSS 设计资料",
+    "tags": ["CSS", "前端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-037",
+    "title": "HTML 语义化",
+    "summary": "开放许可 HTML 资料",
+    "tags": ["HTML", "前端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-038",
+    "title": "JavaScript 工程实践",
+    "summary": "授权 JavaScript 教程",
+    "tags": ["JavaScript", "工程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-039",
+    "title": "Rust 系统编程",
+    "summary": "原创 Rust 学习资料",
+    "tags": ["Rust", "系统"],
+    "category": "编程"
+  },
+  {
+    "id": "c-040",
+    "title": "Go 服务开发",
+    "summary": "开放许可 Go 服务教程",
+    "tags": ["Go", "后端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-041",
+    "title": "Java 服务端基础",
+    "summary": "授权 Java 后端资料",
+    "tags": ["Java", "后端"],
+    "category": "编程"
+  },
+  {
+    "id": "c-042",
+    "title": "Kotlin 工程入门",
+    "summary": "原创 Kotlin 教程",
+    "tags": ["Kotlin", "工程"],
+    "category": "编程"
+  },
+  {
+    "id": "c-043",
+    "title": "SQL 查询实践",
+    "summary": "开放许可 SQL 资料",
+    "tags": ["SQL", "数据库"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-044",
+    "title": "数据库索引设计",
+    "summary": "授权数据库性能指南",
+    "tags": ["索引", "数据库"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-045",
+    "title": "事务与一致性",
+    "summary": "原创事务设计资料",
+    "tags": ["事务", "数据库"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-046",
+    "title": "PostgreSQL 18 特性",
+    "summary": "开放许可 PostgreSQL 18 资料",
+    "tags": ["PostgreSQL", "18"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-047",
+    "title": "MySQL 数据建模",
+    "summary": "授权 MySQL 建模教程",
+    "tags": ["MySQL", "建模"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-048",
+    "title": "SQLite 本地应用",
+    "summary": "原创 SQLite 资料",
+    "tags": ["SQLite", "本地"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-049",
+    "title": "Redis 缓存策略",
+    "summary": "开放许可 Redis 缓存指南",
+    "tags": ["Redis", "缓存"],
+    "category": "后端"
+  },
+  {
+    "id": "c-050",
+    "title": "BullMQ Worker 设计",
+    "summary": "授权 BullMQ 队列资料",
+    "tags": ["BullMQ", "Worker"],
+    "category": "后端"
+  },
+  {
+    "id": "c-051",
+    "title": "消息队列可靠性",
+    "summary": "原创队列可靠性资料",
+    "tags": ["队列", "可靠性"],
+    "category": "后端"
+  },
+  {
+    "id": "c-052",
+    "title": "事件驱动架构",
+    "summary": "开放许可事件架构指南",
+    "tags": ["事件", "架构"],
+    "category": "架构"
+  },
+  {
+    "id": "c-053",
+    "title": "Outbox 模式",
+    "summary": "授权 Outbox 一致性资料",
+    "tags": ["Outbox", "一致性"],
+    "category": "架构"
+  },
+  {
+    "id": "c-054",
+    "title": "模块化单体",
+    "summary": "原创模块化单体实践",
+    "tags": ["单体", "架构"],
+    "category": "架构"
+  },
+  {
+    "id": "c-055",
+    "title": "C4 架构图",
+    "summary": "开放许可 C4 建模资料",
+    "tags": ["C4", "架构"],
+    "category": "架构"
+  },
+  {
+    "id": "c-056",
+    "title": "Docker 镜像安全",
+    "summary": "授权容器安全资料",
+    "tags": ["Docker", "安全"],
+    "category": "运维"
+  },
+  {
+    "id": "c-057",
+    "title": "容器健康检查",
+    "summary": "原创容器运维指南",
+    "tags": ["容器", "健康检查"],
+    "category": "运维"
+  },
+  {
+    "id": "c-058",
+    "title": "Kubernetes 基础",
+    "summary": "开放许可 Kubernetes 资料",
+    "tags": ["Kubernetes", "运维"],
+    "category": "运维"
+  },
+  {
+    "id": "c-059",
+    "title": "CI/CD 流水线",
+    "summary": "授权 CI/CD 教程",
+    "tags": ["CI", "CD"],
+    "category": "运维"
+  },
+  {
+    "id": "c-060",
+    "title": "GitHub Actions",
+    "summary": "原创 GitHub Actions 资料",
+    "tags": ["GitHub", "Actions"],
+    "category": "运维"
+  },
+  {
+    "id": "c-061",
+    "title": "依赖安全扫描",
+    "summary": "开放许可依赖治理资料",
+    "tags": ["依赖", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-062",
+    "title": "Secret Scanning",
+    "summary": "授权密钥扫描指南",
+    "tags": ["secret", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-063",
+    "title": "CodeQL 入门",
+    "summary": "原创 CodeQL 工程资料",
+    "tags": ["CodeQL", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-064",
+    "title": "XSS 防护指南",
+    "summary": "开放许可 XSS 安全资料",
+    "tags": ["XSS", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-065",
+    "title": "CSRF 防护实践",
+    "summary": "授权 CSRF 防护资料",
+    "tags": ["CSRF", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-066",
+    "title": "开放重定向防护",
+    "summary": "原创开放重定向安全指南",
+    "tags": ["重定向", "安全"],
+    "category": "安全"
+  },
+  {
+    "id": "c-067",
+    "title": "SSRF DNS Rebinding",
+    "summary": "开放许可 SSRF 高级资料",
+    "tags": ["SSRF", "DNS"],
+    "category": "安全"
+  },
+  {
+    "id": "c-068",
+    "title": "威胁建模 STRIDE",
+    "summary": "授权 STRIDE 威胁模型",
+    "tags": ["STRIDE", "威胁"],
+    "category": "安全"
+  },
+  {
+    "id": "c-069",
+    "title": "隐私最小化设计",
+    "summary": "原创隐私工程资料",
+    "tags": ["隐私", "合规"],
+    "category": "合规"
+  },
+  {
+    "id": "c-070",
+    "title": "数据保留策略",
+    "summary": "开放许可数据保留指南",
+    "tags": ["保留", "合规"],
+    "category": "合规"
+  },
+  {
+    "id": "c-071",
+    "title": "授权证据管理",
+    "summary": "已授权的证据治理资料",
+    "tags": ["授权", "证据"],
+    "category": "合规"
+  },
+  {
+    "id": "c-072",
+    "title": "版权通知流程",
+    "summary": "原创版权通知资料",
+    "tags": ["版权", "通知"],
+    "category": "合规"
+  },
+  {
+    "id": "c-073",
+    "title": "公有领域检索",
+    "summary": "公有领域来源检索资料",
+    "tags": ["公有领域", "检索"],
+    "category": "合规"
+  },
+  {
+    "id": "c-074",
+    "title": "Creative Commons 许可",
+    "summary": "开放许可协议说明",
+    "tags": ["CC", "许可"],
+    "category": "合规"
+  },
+  {
+    "id": "c-075",
+    "title": "Apache License 2.0",
+    "summary": "公有项目许可证资料",
+    "tags": ["Apache", "许可"],
+    "category": "合规"
+  },
+  {
+    "id": "c-076",
+    "title": "MIT License 说明",
+    "summary": "开放许可许可证说明",
+    "tags": ["MIT", "许可"],
+    "category": "合规"
+  },
+  {
+    "id": "c-077",
+    "title": "资料来源审计",
+    "summary": "授权来源审计方法",
+    "tags": ["来源", "审计"],
+    "category": "合规"
+  },
+  {
+    "id": "c-078",
+    "title": "内容收录规则",
+    "summary": "原创内容治理规范",
+    "tags": ["收录", "治理"],
+    "category": "合规"
+  },
+  {
+    "id": "c-079",
+    "title": "资源审核工作流",
+    "summary": "开放许可审核流程资料",
+    "tags": ["审核", "工作流"],
+    "category": "合规"
+  },
+  {
+    "id": "c-080",
+    "title": "链接状态复核",
+    "summary": "授权链接健康检查资料",
+    "tags": ["链接", "复核"],
+    "category": "运维"
+  },
+  {
+    "id": "c-081",
+    "title": "Meilisearch 搜索配置",
+    "summary": "原创 Meilisearch 配置资料",
+    "tags": ["Meilisearch", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-082",
+    "title": "Typesense 搜索对比",
+    "summary": "授权 Typesense 评测资料",
+    "tags": ["Typesense", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-083",
+    "title": "中文搜索评测",
+    "summary": "开放许可中文搜索语料",
+    "tags": ["中文", "评测"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-084",
+    "title": "拼音搜索设计",
+    "summary": "原创拼音检索指南",
+    "tags": ["拼音", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-085",
+    "title": "同义词管理",
+    "summary": "授权同义词工程资料",
+    "tags": ["同义词", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-086",
+    "title": "相关度排序",
+    "summary": "开放许可搜索排序指南",
+    "tags": ["相关度", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-087",
+    "title": "索引重建与交换",
+    "summary": "Meilisearch swap indexes 实践",
+    "tags": ["索引", "swap"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-088",
+    "title": "搜索无结果分析",
+    "summary": "原创无结果词分析资料",
+    "tags": ["搜索", "分析"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-089",
+    "title": "搜索结果过滤",
+    "summary": "授权搜索过滤教程",
+    "tags": ["过滤", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-090",
+    "title": "搜索分页设计",
+    "summary": "开放许可分页设计资料",
+    "tags": ["分页", "搜索"],
+    "category": "搜索"
+  },
+  {
+    "id": "c-091",
+    "title": "S3 私有对象存储",
+    "summary": "授权私有对象存储资料",
+    "tags": ["S3", "存储"],
+    "category": "运维"
+  },
+  {
+    "id": "c-092",
+    "title": "本地私有证据存储",
+    "summary": "开发环境证据存储设计",
+    "tags": ["证据", "本地"],
+    "category": "合规"
+  },
+  {
+    "id": "c-093",
+    "title": "PostgreSQL 备份恢复",
+    "summary": "开放许可备份恢复指南",
+    "tags": ["备份", "恢复"],
+    "category": "运维"
+  },
+  {
+    "id": "c-094",
+    "title": "RPO RTO 设计",
+    "summary": "授权灾备指标资料",
+    "tags": ["RPO", "RTO"],
+    "category": "运维"
+  },
+  {
+    "id": "c-095",
+    "title": "结构化日志",
+    "summary": "原创结构化日志指南",
+    "tags": ["日志", "观测"],
+    "category": "运维"
+  },
+  {
+    "id": "c-096",
+    "title": "请求 ID 追踪",
+    "summary": "开放许可请求追踪资料",
+    "tags": ["请求ID", "日志"],
+    "category": "运维"
+  },
+  {
+    "id": "c-097",
+    "title": "健康检查设计",
+    "summary": "授权服务健康检查资料",
+    "tags": ["健康", "运维"],
+    "category": "运维"
+  },
+  {
+    "id": "c-098",
+    "title": "队列死信处理",
+    "summary": "原创死信队列指南",
+    "tags": ["死信", "队列"],
+    "category": "后端"
+  },
+  {
+    "id": "c-099",
+    "title": "幂等任务设计",
+    "summary": "开放许可幂等任务资料",
+    "tags": ["幂等", "任务"],
+    "category": "后端"
+  },
+  {
+    "id": "c-100",
+    "title": "阶段二工程骨架",
+    "summary": "授权工程初始化资料",
+    "tags": ["阶段二", "工程"],
+    "category": "架构"
+  },
+  {
+    "id": "c-101",
+    "title": "pnpm Workspace 管理",
+    "summary": "开放许可 pnpm workspace 资料",
+    "tags": ["pnpm", "workspace"],
+    "category": "工程"
+  },
+  {
+    "id": "c-102",
+    "title": "Node.js 24 LTS",
+    "summary": "授权 Node.js 运行时资料",
+    "tags": ["Node.js", "24"],
+    "category": "工程"
+  },
+  {
+    "id": "c-103",
+    "title": "Prisma 7 数据模型",
+    "summary": "原创 Prisma 7 资料",
+    "tags": ["Prisma", "7"],
+    "category": "数据库"
+  },
+  {
+    "id": "c-104",
+    "title": "Next.js 16 App Router",
+    "summary": "开放许可 Next.js 工程资料",
+    "tags": ["Next.js", "App Router"],
+    "category": "前端"
+  },
+  {
+    "id": "c-105",
+    "title": "React 19 应用实践",
+    "summary": "授权 React 19 资料",
+    "tags": ["React", "19"],
+    "category": "前端"
+  }
+]

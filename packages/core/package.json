@@ -1,0 +1,23 @@
+{
+  "name": "@platform/core",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "admin:create": "tsx src/admin-create.ts",
+    "lint": "eslint src",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@platform/config": "workspace:*",
+    "@platform/db": "workspace:*",
+    "argon2": "0.44.0",
+    "uuid": "11.1.0"
+  },
+  "devDependencies": {
+    "@platform/tsconfig": "workspace:*",
+    "tsx": "4.19.4",
+    "vitest": "3.2.4"
+  }
+}

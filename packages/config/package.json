@@ -1,0 +1,23 @@
+{
+  "name": "@platform/config",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "server-only": "0.0.1",
+    "zod": "4.0.0"
+  },
+  "devDependencies": {
+    "@platform/tsconfig": "workspace:*",
+    "vitest": "3.2.4"
+  }
+}

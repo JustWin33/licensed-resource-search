@@ -1,0 +1,25 @@
+{
+  "name": "@platform/search",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "smoke": "tsx src/smoke.ts",
+    "lint": "eslint src",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@platform/config": "workspace:*",
+    "meilisearch": "0.54.0",
+    "uuid": "11.1.0"
+  },
+  "devDependencies": {
+    "@platform/tsconfig": "workspace:*",
+    "tsx": "4.19.4",
+    "vitest": "3.2.4"
+  }
+}

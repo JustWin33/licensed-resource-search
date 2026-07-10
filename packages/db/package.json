@@ -1,0 +1,29 @@
+{
+  "name": "@platform/db",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "lint": "eslint src prisma",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prisma/client": "7.8.0",
+    "@platform/config": "workspace:*",
+    "uuid": "11.1.0"
+  },
+  "devDependencies": {
+    "@platform/tsconfig": "workspace:*",
+    "prisma": "7.8.0",
+    "tsx": "4.19.4",
+    "vitest": "3.2.4"
+  }
+}
