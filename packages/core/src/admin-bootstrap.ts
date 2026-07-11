@@ -57,7 +57,7 @@ async function main() {
       changedFieldsSummary: { changed: ['username', 'email', 'role'] },
     },
   });
-  console.log(`Bootstrap administrator created: ${username}`);
+  console.log('Bootstrap administrator created');
 }
 
 main()
