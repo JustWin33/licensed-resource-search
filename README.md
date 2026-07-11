@@ -40,7 +40,9 @@ pnpm admin:create
 
 ## 生产部署
 
-仓库包含固定版本 Dockerfile 和 `render.yaml` 多服务蓝图，可创建 Web、Worker、PostgreSQL、Redis、Meilisearch 和持久证据目录。部署前请查看托管平台列出的实际费用，并在上线前配置域名、备份目标、私有证据存储和合规信息。
+仓库默认 `render.yaml` 是免费体验蓝图，创建 Web、PostgreSQL 和 Key Value，先支持管理员登录、资源录入、审核和数据库功能。免费 PostgreSQL 30 天后过期，Web 会休眠，本地证据文件不持久化，且不包含 Worker 与 Meilisearch，不应作为正式生产环境。
+
+`render.paid.yaml` 保留完整付费蓝图，可创建 Web、Worker、PostgreSQL、Redis、Meilisearch 和持久证据目录。升级前将其内容同步为 `render.yaml`，并查看托管平台列出的实际费用；正式上线还需配置域名、备份目标、私有证据存储和合规信息。
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/JustWin33/licensed-resource-search)
 
